@@ -1,0 +1,6 @@
+# Ignore all data files
+data/
+# Or ignore specific formats
+*.csv
+*.parquet
+*.zip
