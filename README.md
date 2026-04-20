@@ -5,7 +5,7 @@ Predict taxi trip duration using historical trip data from Kaggle.
 Kaggle competition to build a model that predicts the total ride duration of taxi trips in New York City. The primary dataset is one released by the NYC Taxi and Limousine Commission, which includes pickup time, geo-coordinates, number of passengers, and several other variables.
 
 ### Dataset Description
-The dataset is based on the 2016 NYC Yellow Cab trip record data made available in Big Query on Google Cloud Platform. The data was originally published by the NYC Taxi and Limousine Commission (TLC). The data was sampled and cleaned for the purposes of this playground competition. Based on individual trip attributes, participants should predict the duration of each trip in the test set.
+The dataset is based on the 2016 NYC Yellow Cab trip record data made available in Big Query on Google Cloud Platform. The data was originally published by the NYC Taxi and Limousine Commission (TLC). The data was sampled and cleaned for the purposes of this playground competition. Based on individual trip attributes, participants should predict the duration of each trip in the test set. Download: https://www.kaggle.com/competitions/nyc-taxi-trip-duration/data
 
 ### File descriptions
 - train.csv - the training set (contains 1458644 trip records)
@@ -27,15 +27,16 @@ The dataset is based on the 2016 NYC Yellow Cab trip record data made available 
 
 ### Feature Engineering
 
-- Base features (month, day, hour, weekday, rush hour)
-- Haversine distance
-- Manhattan distance
+- Base features: vendor_id, pickup_hour, pickup_day, pickup_month, passenger_count, pickup_longitude, pickup_latitude, dropoff_longitude, dropoff_latitude
+- Engineered features: base features + manhattan_distance, haversine_distance, rush_hour
 
 ### Models
 
 - Random Forest (baseline)
 - XGBoost
 - Gradient Boosting
+- LGBM
+- CatBoost
 
 ### Evaluation
 
@@ -61,12 +62,13 @@ Where:
 ### Results
 | Model | Features | Score |
 | :--- | :----: | ---: |
-| GBR_haversine | Base features + haversine distance | 0.395203 |
-| XGB_haversine | Base features + haversine | 0.395955 |
-| RF_haversine | Base features + haversine | 0.398183 |
-| GBR_manhattan | Base features + manhattan | 0.408328 |
-| XGB_manhattan | Base features + manhattan | 0.409022|
-| RF_manhattan | Base features + manhattan | 0.411217|
-| RF_base | Base features | 0.726397 |
-| XGB_base | Base features | 0.726742 |
-| GBR_base | Base features | 0.726819 |
+| XGB_engineered | Base features + engineered | 0.045749 |
+| GBR_engineered | Base features + engineered | 0.045789 |
+| XGB_base | Base features | 0.048479 |
+| Cat_engineered | Base features + engineered | 0.048498 |
+| GBR_base | Base features | 0.048625 |
+| LGBM_engineered	 | Base features + engineered | 0.048999|
+| RF_engineered | Base features + engineered | 0.052283|
+| Cat_base | Base features | 0.053268 |
+| LGBM_base | Base features | 0.056816 |
+| RF_base | Base features | 0.070132 |
