@@ -1,5 +1,8 @@
 # Ignore all data files
 data/
+# Ignore artifact
+catboost_info/
+artifacts/
 # Or ignore specific formats
 *.csv
 *.parquet
