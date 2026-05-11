@@ -1,44 +1,73 @@
 # NYC Taxi Trip Duration Prediction
-Predict taxi trip duration using historical trip data from Kaggle.
 
-### Description
-Kaggle competition to build a model that predicts the total ride duration of taxi trips in New York City. The primary dataset is one released by the NYC Taxi and Limousine Commission, which includes pickup time, geo-coordinates, number of passengers, and several other variables.
+### 📌 Project Overview
+This project focuses on predicting the total ride duration of taxi trips in New York City. Using a dataset of approximately 1.45 million records, the goal is to build a regression model that can accurately estimate how long a trip will take based on pickup locations and timestamps.
 
-### Dataset Description
-The dataset is based on the 2016 NYC Yellow Cab trip record data made available in Big Query on Google Cloud Platform. The data was originally published by the NYC Taxi and Limousine Commission (TLC). The data was sampled and cleaned for the purposes of this playground competition. Based on individual trip attributes, participants should predict the duration of each trip in the test set. Download: https://www.kaggle.com/competitions/nyc-taxi-trip-duration/data
+### 🛠️ Tech Stack
+- <b>Language</b>: Python
 
-### File descriptions
+- <b>Libraries</b>: Pandas, NumPy, Scikit-learn, Matplotlib, Seaborn
+
+- <b>Models</b>: Random Forest, Gradient Boosting, XGBoost, LightGBM, CatBoost
+
+### 📊 Dataset Description
+The dataset is based on the 2016 NYC Yellow Cab trip record data made available in Big Query on Google Cloud Platform. The data was originally published by the NYC Taxi and Limousine Commission (TLC). The data was sampled and cleaned for the purposes of this playground competition. Based on individual trip attributes, participants should predict the duration of each trip in the test set. 
+
+
+
+#### Data Setup
+
+1. Initialize Directory: Create the data/raw folder structure to store the source files.
+
+2. Data Placement: Download the NYC Taxi dataset from https://www.kaggle.com/competitions/nyc-taxi-trip-duration/data and move the raw CSVs into the /data/raw/ path to ensure the internal data loaders can find them.
+
+#### File descriptions
 - train.csv - the training set (contains 1458644 trip records)
 - test.csv - the testing set (contains 625134 trip records)
 
-### Data fields
+#### Data fields
 
-- id - a unique identifier for each trip
-- vendor_id - a code indicating the provider associated with the trip record
-- pickup_datetime - date and time when the meter was engaged
-- dropoff_datetime - date and time when the meter was disengaged
-- passenger_count - the number of passengers in the vehicle (driver entered value)
-- pickup_longitude - the longitude where the meter was engaged
-- pickup_latitude - the latitude where the meter was engaged
-- dropoff_longitude - the longitude where the meter was disengaged
-- dropoff_latitude - the latitude where the meter was disengaged
-- store_and_fwd_flag - This flag indicates whether the trip record was held in vehicle memory before sending to the vendor because the vehicle did not have a connection to the server - Y=store and forward; N=not a store and forward trip
-- trip_duration - duration of the trip in seconds
+- <mark>id</mark> - a unique identifier for each trip
+- <mark>vendor_id</mark> - a code indicating the provider associated with the trip record
+- <mark>pickup_datetime</mark> - date and time when the meter was engaged
+- <mark>dropoff_datetime</mark> - date and time when the meter was disengaged
+- <mark>passenger_count</mark> - the number of passengers in the vehicle (driver entered value)
+- <mark>pickup_longitude</mark> - the longitude where the meter was engaged
+- <mark>pickup_latitude</mark> - the latitude where the meter was engaged
+- <mark>dropoff_longitude</mark> - the longitude where the meter was disengaged
+- <mark>dropoff_latitude</mark> - the latitude where the meter was disengaged
+- <mark>store_and_fwd_flag</mark> - This flag indicates whether the trip record was held in vehicle memory before sending to the vendor because the vehicle did not have a connection to the server - Y=store and forward; N=not a store and forward trip
+- <mark>trip_duration </mark> - duration of the trip in seconds <b>(Target Variable)</b>
 
-### Feature Engineering
+### 🚀 Workflow
 
-- Base features: vendor_id, pickup_hour, pickup_day, pickup_month, passenger_count, pickup_longitude, pickup_latitude, dropoff_longitude, dropoff_latitude
-- Engineered features: base features + manhattan_distance, haversine_distance, rush_hour
+#### 1. Data Cleaning & Analysis
 
-### Models
+- Handled outliers to remove trips with unrealistic durations.
 
-- Random Forest (baseline)
-- XGBoost
-- Gradient Boosting
-- LGBM
-- CatBoost
+- Performed distribution analysis to identify skewed features.
 
-### Evaluation
+#### 2. Feature Engineering
+
+Created new features to capture temporal and spatial patterns:
+
+- <b>Temporal</b>: Extracted hour, day_of_week, and month.
+
+- <b>Binary Flags</b>: Created rush_hour to account for NYC traffic patterns.
+
+- <b>Geospatial</b>: Calculated Haversine distance and Manhattan distance between pickup and dropoff points.
+
+#### 3. Data Preprocessing
+
+- <b>Ordinal Encoding (Best for Tree Models)</b>: Keep temporal features as numerical (1-12 or 0-23) because tree models can split based on ordering
+
+#### 4. Modeling & Evaluation
+
+Compared multiple models to find the best balance between speed and accuracy:
+
+- <b>Random Forest</b>: Used as a robust baseline.
+
+- <b>Gradient Boosting (XGBoost/LGBM/CatBoost)</b>: Optimized hyperparameters to minimize Root Mean Squared Logarithmic Error (RMSLE).
 
 The evaluation metric for this competition is Root Mean Squared Logarithmic Error.
 
@@ -50,25 +79,28 @@ The RMSLE is calculated as
 
 Where:
 
-\\(\epsilon\\) is the RMSLE value (score)<br/>
-\\(n\\) is the total number of observations in the (public/private) data set,<br/>
-\\(y_l\\) is your prediction of trip duration, and<br/>
-\\(y\\) is the actual trip duration for \\(i\\).<br/>
-\\(\log(x)\\) is the natural logarithm of \\(x\\)<br/>
+- $\epsilon$ is the RMSLE value (score)<br/>
+- $n$ is the total number of observations<br/>
+- $\hat{y}_i$ is the predicted trip duration<br/>
+- $y_i$ is the actual trip duration for $i$.<br/>
+- $\log(x)$ is the natural logarithm of $(x)$<br/>
 
-### Validation
-- Time-based split (simulates real-world prediction)
 
-### Results
+### 📈 Results
+
+- <b>Best Model</b>: XGBoost
+
+- <b>Key Metric</b>: RMSLE: 0.45749
+
 | Model | Features | Score |
 | :--- | :----: | ---: |
-| XGB_engineered | Base features + engineered | 0.045749 |
-| GBR_engineered | Base features + engineered | 0.045789 |
-| XGB_base | Base features | 0.048479 |
-| Cat_engineered | Base features + engineered | 0.048498 |
-| GBR_base | Base features | 0.048625 |
-| LGBM_engineered	 | Base features + engineered | 0.048999|
-| RF_engineered | Base features + engineered | 0.052283|
-| Cat_base | Base features | 0.053268 |
-| LGBM_base | Base features | 0.056816 |
-| RF_base | Base features | 0.070132 |
+| XGB_engineered | Base features + engineered | 0.45749 |
+| GBR_engineered | Base features + engineered | 0.45789 |
+| XGB_base | Base features | 0.48479 |
+| Cat_engineered | Base features + engineered | 0.48498 |
+| GBR_base | Base features | 0.48625 |
+| LGBM_engineered	 | Base features + engineered | 0.48999|
+| RF_engineered | Base features + engineered | 0.52283|
+| Cat_base | Base features | 0.53268 |
+| LGBM_base | Base features | 0.56816 |
+| RF_base | Base features | 0.70132 |
